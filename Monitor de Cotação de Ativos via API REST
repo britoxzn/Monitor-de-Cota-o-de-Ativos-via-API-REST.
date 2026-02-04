@@ -1,0 +1,41 @@
+import requests
+import time
+import os
+
+def buscar_cotacao():
+    try:
+        # API gratuita que não exige chave (AwesomeAPI)
+        url = "https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL"
+        resposta = requests.get(url)
+        dados = resposta.json()
+        
+        dolar = dados['USDBRL']['bid']
+        euro = dados['EURBRL']['bid']
+        
+        return dolar, euro
+    except Exception as e:
+        print(f"Erro ao buscar dados: {e}")
+        return None, None
+
+def monitorar():
+    print("🚀 Iniciando Monitor de Câmbio em Tempo Real...")
+    print("Pressione Ctrl+C para encerrar.\n")
+    
+    while True:
+        dolar, euro = buscar_cotacao()
+        
+        if dolar and euro:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(f"--- COTAÇÃO ATUAL (BRL) ---")
+            print(f"💵 DÓLAR: R$ {float(dolar):.2f}")
+            print(f"💶 EURO:  R$ {float(euro):.2f}")
+            print(f"---------------------------")
+            
+            # Exemplo de lógica de alerta:
+            if float(dolar) < 5.00:
+                print("⚠️ ALERTA: O Dólar está abaixo de R$ 5,00! Ótimo momento para compra.")
+        
+        time.sleep(30) # Atualiza a cada 30 segundos
+
+if __name__ == "__main__":
+    monitorar()
